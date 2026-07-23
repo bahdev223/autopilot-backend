@@ -1,0 +1,2 @@
+-r base.txt
+# Aucun dev dependency en production
