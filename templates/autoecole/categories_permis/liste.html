@@ -1,0 +1,42 @@
+{% extends "layouts/app.html" %}
+{% block title %}Catégories de permis{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Catégories de permis" subtitle="Gérer les catégories de permis de conduire" add_url="categorie_creer" add_label="Nouvelle catégorie" %}
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Heures conduite</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for cat in categories %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 text-sm font-mono font-medium text-gray-900">{{ cat.code }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ cat.nom }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ cat.heures_conduite_minimum }}h</td>
+                    <td class="px-6 py-4">{% include "components/status_badge.html" with statut=cat.actif|yesno:"ACTIF,INACTIF" %}</td>
+                    <td class="px-6 py-4 text-right text-sm">
+                        {% if cat.actif %}
+                        <a href="{% url 'categorie_desactiver' cat.id %}" class="text-orange-600 hover:underline mr-3">Désactiver</a>
+                        {% else %}
+                        <a href="{% url 'categorie_activer' cat.id %}" class="text-green-600 hover:underline mr-3">Activer</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-500">Aucune catégorie de permis.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

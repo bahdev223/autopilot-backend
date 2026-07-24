@@ -1,0 +1,4 @@
+{% load status_tags %}
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ statut|status_color }}">
+    {{ statut|status_label }}
+</span>

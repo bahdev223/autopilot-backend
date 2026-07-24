@@ -1,0 +1,35 @@
+{% extends "layouts/app.html" %}
+{% block title %}AutoPilot — Exercices comptables{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500"><a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span><a href="{% url 'comptabilite_dashboard' %}" class="hover:text-blue-600">Comptabilité</a><span class="mx-2">/</span><span class="text-gray-900 font-medium">Exercices</span></nav>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div><h1 class="text-2xl font-bold text-gray-900">Exercices comptables</h1><p class="text-sm text-gray-500 mt-1">Gestion des périodes fiscales.</p></div>
+        <a href="{% url 'exercice_creer' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Nouvel exercice</a>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-4">
+    {% for ex in exercices %}
+    <div class="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900"><a href="{% url 'exercice_fiche' ex.pk %}" class="hover:text-blue-600">{{ ex.code }}</a></h3>
+                <p class="text-sm text-gray-500">{{ ex.date_debut|date:"d/m/Y" }} → {{ ex.date_fin|date:"d/m/Y" }}</p>
+            </div>
+            {% if ex.cloture %}<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Clôturé</span>{% else %}<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Ouvert</span>{% endif %}
+        </div>
+        <div class="mt-4 flex gap-2">
+            <a href="{% url 'exercice_fiche' ex.pk %}" class="text-blue-600 hover:underline text-sm">Détail</a>
+            {% if ex.est_ouvert %}
+            <form method="post" action="{% url 'exercice_cloturer' ex.pk %}" class="inline">{% csrf_token %}<button type="submit" class="text-red-600 hover:underline text-sm ml-3" onclick="return confirm('Clôturer cet exercice ?')">Clôturer</button></form>
+            {% else %}
+            <form method="post" action="{% url 'exercice_rouvrir' ex.pk %}" class="inline">{% csrf_token %}<button type="submit" class="text-green-600 hover:underline text-sm ml-3" onclick="return confirm('Rouvrir cet exercice ?')">Rouvrir</button></form>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full">{% include "components/empty_state.html" with title="Aucun exercice" message="Créez le premier exercice comptable." action_url="{% url 'exercice_creer' %}" action_label="Nouvel exercice" %}</div>
+    {% endfor %}
+</div>
+{% endblock %}

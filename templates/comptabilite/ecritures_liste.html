@@ -1,0 +1,64 @@
+{% extends "layouts/app.html" %}
+{% block title %}AutoPilot — Écritures comptables{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500"><a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span><a href="{% url 'comptabilite_dashboard' %}" class="hover:text-blue-600">Comptabilité</a><span class="mx-2">/</span><span class="text-gray-900 font-medium">Écritures</span></nav>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div><h1 class="text-2xl font-bold text-gray-900">Écritures comptables</h1><p class="text-sm text-gray-500 mt-1">Saisie et validation des écritures en partie double.</p></div>
+        <a href="{% url 'ecriture_creer' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Nouvelle écriture</a>
+    </div>
+</div>
+
+<div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-lg border border-gray-200 p-4 text-center"><p class="text-xs text-gray-500 uppercase">Total</p><p class="text-xl font-bold text-gray-900">{{ stats.total }}</p></div>
+    <div class="bg-white rounded-lg border border-gray-200 p-4 text-center"><p class="text-xs text-gray-500 uppercase">Validées</p><p class="text-xl font-bold text-green-600">{{ stats.validees }}</p></div>
+    <div class="bg-white rounded-lg border border-gray-200 p-4 text-center"><p class="text-xs text-gray-500 uppercase">En attente</p><p class="text-xl font-bold text-yellow-600">{{ stats.non_validees }}</p></div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="px-6 py-3 border-b border-gray-200 bg-gray-50 flex gap-3">
+        <form class="flex-1 flex gap-3">
+            <input type="text" name="q" value="{{ q }}" placeholder="Rechercher référence, libellé..." class="flex-1 pl-3 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <select name="status" onchange="this.form.submit()" class="text-sm border border-gray-300 rounded-lg px-3 py-1.5">
+                <option value="">Tous</option>
+                <option value="validee" {% if status == 'validee' %}selected{% endif %}>Validées</option>
+                <option value="non_validee" {% if status == 'non_validee' %}selected{% endif %}>Non validées</option>
+            </select>
+            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Rechercher</button>
+        </form>
+    </div>
+    {% if ecritures %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50"><tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Référence</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Libellé</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Journal</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for e in ecritures %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-3 text-sm font-mono text-blue-600"><a href="{% url 'ecriture_fiche' e.pk %}">{{ e.reference }}</a></td>
+                    <td class="px-6 py-3 text-sm text-gray-900">{{ e.libelle|truncatewords:10 }}</td>
+                    <td class="px-6 py-3 text-sm text-gray-500">{{ e.journal.code }}</td>
+                    <td class="px-6 py-3 text-sm text-gray-500">{{ e.date_ecriture|date:"d/m/Y" }}</td>
+                    <td class="px-6 py-3">{% if e.validee %}<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Validée</span>{% else %}<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">En attente</span>{% endif %}</td>
+                    <td class="px-6 py-3 text-right">
+                        <a href="{% url 'ecriture_fiche' e.pk %}" class="text-blue-600 hover:underline text-sm mr-3">Voir</a>
+                        {% if not e.validee %}
+                        <a href="{% url 'ecriture_modifier' e.pk %}" class="text-gray-600 hover:underline text-sm">Modifier</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        {% include "components/empty_state.html" with title="Aucune écriture" message="Commencez par créer la première écriture comptable." action_url="{% url 'ecriture_creer' %}" action_label="Nouvelle écriture" %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "layouts/app.html" %}
+{% block title %}Reporter la leçon{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Reporter la leçon" back_url="lecon_fiche" back_id=lecon.id %}
+
+<form method="post" class="max-w-lg">
+    {% csrf_token %}
+    <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <p class="text-sm text-gray-600">Leçon du <strong>{{ lecon.date_debut|date:"d/m/Y H:i" }}</strong> — reporter vers :</p>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nouvelle date et début</label>
+            <input type="datetime-local" name="date_debut" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nouvelle date et fin</label>
+            <input type="datetime-local" name="date_fin" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+        </div>
+    </div>
+    <div class="flex gap-3 mt-6">
+        <button type="submit" class="px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700">Confirmer le report</button>
+        <a href="{% url 'lecon_fiche' lecon.id %}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Retour</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "layouts/app.html" %}
+{% block title %}Dossiers candidats{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Dossiers candidats" subtitle="Gérer les dossiers d'examen de conduite" %}
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="p-4 border-b border-gray-200">
+        <form method="get" class="flex gap-3">
+            <input type="text" name="q" value="{{ q }}" placeholder="Rechercher par numéro ou nom..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <select name="statut" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Tous les statuts</option>
+                <option value="BROUILLON" {% if statut == 'BROUILLON' %}selected{% endif %}>Brouillon</option>
+                <option value="OUVERT" {% if statut == 'OUVERT' %}selected{% endif %}>Ouvert</option>
+                <option value="EN_FORMATION" {% if statut == 'EN_FORMATION' %}selected{% endif %}>En formation</option>
+                <option value="PRET_EXAMEN" {% if statut == 'PRET_EXAMEN' %}selected{% endif %}>Prêt pour examen</option>
+                <option value="CLOTURE" {% if statut == 'CLOTURE' %}selected{% endif %}>Clôturé</option>
+            </select>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">Filtrer</button>
+        </form>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">N° Dossier</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Apprenant</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Moniteur</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for d in dossiers %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 text-sm font-mono font-medium text-gray-900">{{ d.numero_dossier }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ d.inscription.apprenant }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ d.categorie_permis.code }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ d.moniteur_referent|default:"—" }}</td>
+                    <td class="px-6 py-4">{% include "components/status_badge.html" with statut=d.statut %}</td>
+                    <td class="px-6 py-4 text-right text-sm"><a href="{% url 'dossier_fiche' d.id %}" class="text-blue-600 hover:underline">Voir</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">Aucun dossier trouvé.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

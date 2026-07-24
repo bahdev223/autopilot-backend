@@ -1,0 +1,169 @@
+{% load status_tags %}
+<aside class="fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-auto"
+       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+    <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+        <a href="{% url 'dashboard' %}" class="text-xl font-bold text-blue-600">AutoPilot</a>
+        <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+    </div>
+
+    <nav class="px-4 py-4 space-y-1 overflow-y-auto h-[calc(100vh-4rem)]">
+        <a href="{% url 'dashboard' %}" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            Tableau de bord
+        </a>
+
+        <div class="pt-4">
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Formation</p>
+            <div class="mt-2 space-y-1">
+                <a href="{% url 'apprenants_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'apprenant' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+                    Apprenants
+                </a>
+                <a href="{% url 'formations_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'formation' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    Formations
+                </a>
+                <a href="{% url 'sessions_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'session' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Sessions
+                </a>
+                <a href="{% url 'inscriptions_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'inscription' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Inscriptions
+                </a>
+            </div>
+        </div>
+
+        <div class="pt-4">
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Auto-école</p>
+            <div class="mt-2 space-y-1">
+                <a href="{% url 'dossiers_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'dossier' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Dossiers candidats
+                </a>
+                <a href="{% url 'moniteurs_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'moniteur' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Moniteurs
+                </a>
+                <a href="{% url 'vehicules_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'vehicule' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Véhicules
+                </a>
+                <a href="{% url 'planning' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'planning' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Planning
+                </a>
+                <a href="{% url 'lecons_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'lecon' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Leçons
+                </a>
+                <a href="{% url 'evaluations_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'evaluation' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    Évaluations
+                </a>
+                <a href="{% url 'examens_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'examen' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                    Examens
+                </a>
+            </div>
+        </div>
+
+        <div class="pt-4">
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Organisation</p>
+            <div class="mt-2 space-y-1">
+                <a href="{% url 'etablissement_fiche' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'etablissement_fiche' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    Établissement
+                </a>
+                <a href="{% url 'utilisateurs_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'utilisateur' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+                    Utilisateurs
+                </a>
+                <a href="{% url 'configuration' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'configuration' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Configuration
+                </a>
+            </div>
+        </div>
+
+        <div class="pt-4" x-data="{ financeOpen: true }">
+            <button @click="financeOpen = !financeOpen" class="flex items-center justify-between w-full px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                Finance
+                <svg class="w-4 h-4 transition-transform" :class="financeOpen ? 'rotate-0' : '-rotate-90'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div x-show="financeOpen" class="mt-2 space-y-1">
+                <a href="{% url 'expenses_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'expense' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    Dépenses
+                </a>
+                <div x-data="{ comptaLibOpen: false }" class="space-y-1">
+                    <button @click="comptaLibOpen = !comptaLibOpen" class="w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'comptabilite' or request.resolver_match.url_name == 'ecritures_liste' or request.resolver_match.url_name|startswith:'ecriture_' or request.resolver_match.url_name == 'comptes_liste' or request.resolver_match.url_name == 'journaux_liste' or request.resolver_match.url_name == 'balance' or request.resolver_match.url_name == 'grand_livre' or request.resolver_match.url_name == 'bilan' or request.resolver_match.url_name == 'compte_resultat' or request.resolver_match.url_name|startswith:'exercice' or request.resolver_match.url_name|startswith:'immobilisation' or request.resolver_match.url_name == 'rapprochement_liste' or request.resolver_match.url_name == 'rapprochement_fiche' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}" :class="comptaLibOpen ? 'bg-blue-50 text-blue-700' : ''">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            Comptabilité
+                        </span>
+                        <svg class="w-4 h-4 transition-transform" :class="comptaLibOpen ? 'rotate-0' : '-rotate-90'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="comptaLibOpen" class="ml-8 space-y-1">
+                        <a href="{% url 'comptabilite_dashboard' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name == 'comptabilite_dashboard' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Tableau de bord</a>
+                        <a href="{% url 'ecritures_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'ecriture' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Écritures</a>
+                        <a href="{% url 'comptes_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'compte' and '/comptabilite/' in request.path %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Comptes</a>
+                        <a href="{% url 'journaux_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'journal' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Journaux</a>
+                        <a href="{% url 'balance' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name == 'balance' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Balance</a>
+                        <a href="{% url 'grand_livre' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name == 'grand_livre' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Grand livre</a>
+                        <a href="{% url 'bilan' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name == 'bilan' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Bilan</a>
+                        <a href="{% url 'compte_resultat' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name == 'compte_resultat' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Compte de résultat</a>
+                        <a href="{% url 'exercices_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'exercice' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Exercices</a>
+                        <a href="{% url 'immobilisations_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'immobilisation' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Immobilisations</a>
+                        <a href="{% url 'rapprochement_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name == 'rapprochement_liste' and '/comptabilite/' in request.path %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Rapprochement</a>
+                    </div>
+                </div>
+                <div x-data="{ comptesOpen: false }" class="space-y-1">
+                    <button @click="comptesOpen = !comptesOpen" class="w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'comptes_dashboard' or request.resolver_match.url_name == 'comptes_bancaires_liste' or request.resolver_match.url_name|startswith:'compte_bancaire' or request.resolver_match.url_name|startswith:'compte_detail' or request.resolver_match.url_name == 'compte_creer' or request.resolver_match.url_name|startswith:'mouvement' or request.resolver_match.url_name|startswith:'transfert' or request.resolver_match.url_name == 'rapprochement_bancaire_liste' or request.resolver_match.url_name == 'rapprochement_detail' or request.resolver_match.url_name == 'rapprochement_initialiser' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}" :class="comptesOpen ? 'bg-blue-50 text-blue-700' : ''">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            Comptes
+                        </span>
+                        <svg class="w-4 h-4 transition-transform" :class="comptesOpen ? 'rotate-0' : '-rotate-90'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="comptesOpen" class="ml-8 space-y-1">
+                        <a href="{% url 'comptes_dashboard' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name == 'comptes_dashboard' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Tableau de bord</a>
+                        <a href="{% url 'comptes_bancaires_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'compte_bancaire' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Comptes</a>
+                        <a href="{% url 'mouvements_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'mouvement' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Mouvements</a>
+                        <a href="{% url 'transferts_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'transfert' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Transferts</a>
+                        <a href="{% url 'rapprochement_bancaire_liste' %}" class="sidebar-link block px-3 py-1.5 text-sm rounded-lg transition-colors {% if request.resolver_match.url_name == 'rapprochement_bancaire_liste' %}bg-blue-50 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Rapprochement</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-4">
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ressources Humaines</p>
+            <div class="mt-2 space-y-1">
+                <a href="{% url 'employes_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name|startswith:'employe' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+                    Employés
+                </a>
+            </div>
+        </div>
+
+        <div class="pt-4">
+            <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Système</p>
+            <div class="mt-2 space-y-1">
+                <a href="{% url 'audit_liste' %}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'audit_liste' %}bg-blue-50 text-blue-700{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Journal d'activité
+                </a>
+                <a href="/api/docs/" target="_blank" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                    Documentation API
+                </a>
+            </div>
+        </div>
+    </nav>
+</aside>
+
+<!-- Mobile overlay -->
+<div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden" style="display: none;"></div>

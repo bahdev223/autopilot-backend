@@ -1,0 +1,20 @@
+{% extends "layouts/app.html" %}
+{% block title %}{{ vehicule.immatriculation }}{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title=vehicule.immatriculation back_url="vehicules_liste" %}
+
+<div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4 max-w-2xl">
+    <h3 class="text-lg font-semibold text-gray-900">Informations</h3>
+    <dl class="grid grid-cols-2 gap-4 text-sm">
+        <div><dt class="text-gray-500">Immatriculation</dt><dd class="font-medium font-mono">{{ vehicule.immatriculation }}</dd></div>
+        <div><dt class="text-gray-500">Marque</dt><dd class="font-medium">{{ vehicule.marque }}</dd></div>
+        <div><dt class="text-gray-500">Modèle</dt><dd class="font-medium">{{ vehicule.modele|default:"—" }}</dd></div>
+        <div><dt class="text-gray-500">Année</dt><dd class="font-medium">{{ vehicule.annee|default:"—" }}</dd></div>
+        <div><dt class="text-gray-500">Catégorie</dt><dd class="font-medium">{{ vehicule.categorie_permis.code|default:"—" }}</dd></div>
+        <div><dt class="text-gray-500">Statut</dt><dd>{% include "components/status_badge.html" with statut=vehicule.statut %}</dd></div>
+        <div><dt class="text-gray-500">Kilométrage</dt><dd class="font-medium">{{ vehicule.kilometrage|default:"0" }} km</dd></div>
+        <div><dt class="text-gray-500">Assurance</dt><dd class="font-medium">{{ vehicule.date_expiration_assurance|date:"d/m/Y"|default:"—" }}</dd></div>
+        <div><dt class="text-gray-500">Visite technique</dt><dd class="font-medium">{{ vehicule.date_expiration_visite_technique|date:"d/m/Y"|default:"—" }}</dd></div>
+    </dl>
+</div>
+{% endblock %}

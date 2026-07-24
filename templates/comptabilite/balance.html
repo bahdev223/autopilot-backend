@@ -1,0 +1,50 @@
+{% extends "layouts/app.html" %}
+{% block title %}AutoPilot — Balance{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500"><a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span><a href="{% url 'comptabilite_dashboard' %}" class="hover:text-blue-600">Comptabilité</a><span class="mx-2">/</span><span class="text-gray-900 font-medium">Balance</span></nav>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div><h1 class="text-2xl font-bold text-gray-900">Balance générale</h1><p class="text-sm text-gray-500 mt-1">Liste des comptes avec soldes débiteurs et créditeurs.</p></div>
+        <form class="flex gap-2">
+            <select name="exercice" class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500">
+                <option value="">Tous les exercices</option>
+                {% for ex in exercices %}<option value="{{ ex.pk }}" {% if exercice_id|stringformat:'s' == ex.pk|stringformat:'s' %}selected{% endif %}>{{ ex.code }}</option>{% endfor %}
+            </select>
+            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Filtrer</button>
+        </form>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50"><tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Compte</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Libellé</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total débit</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total crédit</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Solde débiteur</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Solde créditeur</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for ligne in balance %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-3 text-sm font-mono text-blue-600"><a href="{% url 'compte_fiche' ligne.compte_id %}">{{ ligne.compte__code }}</a></td>
+                    <td class="px-6 py-3 text-sm text-gray-900">{{ ligne.compte__libelle }}</td>
+                    <td class="px-6 py-3 text-sm text-right font-mono">{{ ligne.total_debit|floatformat:2 }}</td>
+                    <td class="px-6 py-3 text-sm text-right font-mono">{{ ligne.total_credit|floatformat:2 }}</td>
+                    <td class="px-6 py-3 text-sm text-right font-mono">{{ ligne.solde_debiteur|floatformat:2 }}</td>
+                    <td class="px-6 py-3 text-sm text-right font-mono">{{ ligne.solde_crediteur|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="bg-gray-50 font-semibold"><tr>
+                <td colspan="2" class="px-6 py-3 text-sm text-gray-900">Totaux</td>
+                <td class="px-6 py-3 text-sm text-right font-mono text-gray-900">{{ total_debit|floatformat:2 }}</td>
+                <td class="px-6 py-3 text-sm text-right font-mono text-gray-900">{{ total_credit|floatformat:2 }}</td>
+                <td colspan="2"></td>
+            </tr></tfoot>
+        </table>
+    </div>
+</div>
+{% endblock %}

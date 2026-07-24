@@ -1,0 +1,41 @@
+{% extends "layouts/app.html" %}
+{% block title %}AutoPilot — Nouvelle inscription{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500">
+        <a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span>
+        <a href="/inscriptions/" class="hover:text-blue-600">Inscriptions</a><span class="mx-2">/</span>
+        <span class="text-gray-900 font-medium">Nouvelle</span>
+    </nav>
+    <h1 class="text-2xl font-bold text-gray-900">Nouvelle inscription</h1>
+</div>
+<form method="post" class="bg-white rounded-xl border border-gray-200 p-6 space-y-6 max-w-2xl">
+    {% csrf_token %}
+
+    <div>
+        <h2 class="text-sm font-semibold text-gray-500 uppercase mb-3">1. Apprenant</h2>
+        <select name="apprenant_id" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+            {% if apprenant %}
+                <option value="{{ apprenant.id }}" selected>{{ apprenant }}</option>
+            {% else %}
+                <option value="">— Sélectionner un apprenant —</option>
+                {% for a in apprenants %}<option value="{{ a.id }}">{{ a.nom }} {{ a.prenom }} ({{ a.matricule }})</option>{% endfor %}
+            {% endif %}
+        </select>
+        <p class="text-xs text-gray-400 mt-1"><a href="{% url 'apprenant_creer' %}" class="text-blue-600 hover:underline">Créer un nouvel apprenant</a></p>
+    </div>
+
+    <div>
+        <h2 class="text-sm font-semibold text-gray-500 uppercase mb-3">2. Session</h2>
+        <select name="session_id" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+            <option value="">— Sélectionner une session —</option>
+            {% for s in sessions %}<option value="{{ s.id }}">{{ s.formation.code }} — {{ s.code }} ({{ s.date_debut|date:"d/m/Y" }})</option>{% endfor %}
+        </select>
+    </div>
+
+    <div class="flex gap-3 pt-4 border-t border-gray-200">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">Créer l'inscription</button>
+        <a href="/inscriptions/" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Annuler</a>
+    </div>
+</form>
+{% endblock %}

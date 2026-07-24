@@ -1,0 +1,63 @@
+{% extends "layouts/app.html" %}
+{% load status_tags %}
+{% block title %}AutoPilot — Apprenants{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500"><a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span><span class="text-gray-900 font-medium">Apprenants</span></nav>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div><h1 class="text-2xl font-bold text-gray-900">Apprenants</h1><p class="text-sm text-gray-500 mt-1">Gérez les personnes inscrites dans l'établissement.</p></div>
+        <a href="{% url 'apprenant_creer' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Nouvel apprenant</a>
+    </div>
+</div>
+
+<div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-lg border border-gray-200 p-4 text-center"><p class="text-xs text-gray-500 uppercase">Total</p><p class="text-xl font-bold text-gray-900">{{ stats.total }}</p></div>
+    <div class="bg-white rounded-lg border border-gray-200 p-4 text-center"><p class="text-xs text-gray-500 uppercase">Actifs</p><p class="text-xl font-bold text-green-600">{{ stats.actifs }}</p></div>
+    <div class="bg-white rounded-lg border border-gray-200 p-4 text-center"><p class="text-xs text-gray-500 uppercase">Inactifs</p><p class="text-xl font-bold text-gray-500">{{ stats.inactifs }}</p></div>
+    <div class="bg-white rounded-lg border border-gray-200 p-4 text-center"><p class="text-xs text-gray-500 uppercase">Archivés</p><p class="text-xl font-bold text-gray-400">{{ stats.archives }}</p></div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="px-6 py-3 border-b border-gray-200 bg-gray-50 flex gap-3">
+        <form class="flex-1 flex gap-3">
+            <input type="text" name="q" value="{{ q }}" placeholder="Rechercher nom, prénom, matricule..." class="flex-1 pl-3 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <select name="statut" onchange="this.form.submit()" class="text-sm border border-gray-300 rounded-lg px-3 py-1.5">
+                <option value="">Tous les statuts</option>
+                <option value="ACTIF" {% if statut == 'ACTIF' %}selected{% endif %}>Actif</option>
+                <option value="INACTIF" {% if statut == 'INACTIF' %}selected{% endif %}>Inactif</option>
+                <option value="ARCHIVE" {% if statut == 'ARCHIVE' %}selected{% endif %}>Archivé</option>
+            </select>
+            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Rechercher</button>
+        </form>
+    </div>
+    {% if apprenants %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50"><tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Matricule</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom complet</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Téléphone</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for a in apprenants %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-3 text-sm font-mono text-gray-900">{{ a.matricule }}</td>
+                    <td class="px-6 py-3 text-sm font-medium text-gray-900">{{ a.nom }} {{ a.prenom }}</td>
+                    <td class="px-6 py-3 text-sm text-gray-500">{{ a.telephone|default:"—" }}</td>
+                    <td class="px-6 py-3">{% include "components/status_badge.html" with statut=a.statut %}</td>
+                    <td class="px-6 py-3 text-right">
+                        <a href="{% url 'apprenant_fiche' a.id %}" class="text-blue-600 hover:underline text-sm mr-3">Voir</a>
+                        <a href="{% url 'apprenant_modifier' a.id %}" class="text-gray-600 hover:underline text-sm">Modifier</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        {% include "components/empty_state.html" with title="Aucun apprenant" message="Commencez par ajouter le premier apprenant." action_url="/apprenants/nouveau/" action_label="Nouvel apprenant" %}
+    {% endif %}
+</div>
+{% endblock %}

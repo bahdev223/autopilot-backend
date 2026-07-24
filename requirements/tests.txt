@@ -1,0 +1,6 @@
+# AutoPilot — Tests d'intégration
+pytest>=8
+pytest-django>=4
+pytest-cov>=5
+factory-boy>=3
+ruff>=0.5

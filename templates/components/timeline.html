@@ -1,0 +1,32 @@
+<div class="flow-root">
+    <ul class="-mb-8">
+        {% for entry in entries %}
+        <li>
+            <div class="relative pb-8">
+                {% if not forloop.last %}
+                    <span class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                {% endif %}
+                <div class="relative flex items-start gap-3">
+                    <div class="relative flex items-center justify-center w-10 h-10 rounded-full {{ entry.icon_bg|default:'bg-gray-100' }} ring-8 ring-white">
+                        {% if entry.icon %}
+                            {{ entry.icon|safe }}
+                        {% else %}
+                            <svg class="w-5 h-5 {{ entry.icon_color|default:'text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        {% endif %}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-medium text-gray-900">{{ entry.title }}</p>
+                        <p class="text-sm text-gray-500">{{ entry.description }}</p>
+                        {% if entry.detail %}
+                            <p class="mt-1 text-xs text-gray-400">{{ entry.detail }}</p>
+                        {% endif %}
+                    </div>
+                    {% if entry.time %}
+                        <div class="text-xs text-gray-400 whitespace-nowrap">{{ entry.time }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-autoecole"
+version = "0.1.0"
+description = "Extension auto-école pour django-formation"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = [
+    "django>=5.2",
+    "djangorestframework>=3.15",
+    "django-filter>=24",
+    "drf-spectacular>=0.27",
+    "django-formation",
+]
+
+[project.urls]
+Homepage = "https://github.com/bahdev223/django-autoecole"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-django>=4",
+    "pytest-cov>=5",
+    "factory-boy>=3",
+    "freezegun>=1",
+    "ruff>=0.6",
+    "mypy>=1",
+    "django-stubs>=5",
+    "django-test-migrations>=1.4",
+    "pre-commit>=3.7",
+    "psycopg[binary]>=3.2",
+    "djangorestframework-stubs[compatible-mypy]>=3.15",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.settings"
+pythonpath = ["src", "tests"]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 140
+
+[tool.coverage.run]
+source = ["django_autoecole"]
+omit = ["*/migrations/*", "*/admin/*"]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "tests.settings"
+
+[[tool.mypy.overrides]]
+module = ["django_autoecole.admin.*"]
+disable_error_code = ["attr-defined"]
+
+[[tool.mypy.overrides]]
+module = ["django_autoecole.api.serializers.*"]
+disable_error_code = ["arg-type", "var-annotated"]

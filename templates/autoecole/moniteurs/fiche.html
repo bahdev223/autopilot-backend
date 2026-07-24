@@ -1,0 +1,42 @@
+{% extends "layouts/app.html" %}
+{% block title %}{{ moniteur.nom_complet }}{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title=moniteur.nom_complet back_url="moniteurs_liste" %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h3 class="text-lg font-semibold text-gray-900">Informations</h3>
+        <dl class="grid grid-cols-2 gap-4 text-sm">
+            <div><dt class="text-gray-500">Nom</dt><dd class="font-medium">{{ moniteur.nom }} {{ moniteur.prenom }}</dd></div>
+            <div><dt class="text-gray-500">Téléphone</dt><dd class="font-medium">{{ moniteur.telephone|default:"—" }}</dd></div>
+            <div><dt class="text-gray-500">Email</dt><dd class="font-medium">{{ moniteur.email|default:"—" }}</dd></div>
+            <div><dt class="text-gray-500">Statut</dt><dd>{% include "components/status_badge.html" with statut=moniteur.statut %}</dd></div>
+            <div class="col-span-2"><dt class="text-gray-500">Catégories habilitées</dt><dd class="font-medium mt-1">{% for c in moniteur.categories_permis.all %}<span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded mr-1">{{ c.code }}</span>{% empty %}Aucune{% endfor %}</dd></div>
+        </dl>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-3">
+        <h3 class="text-lg font-semibold text-gray-900">Actions</h3>
+        {% if moniteur.statut == 'ACTIF' %}
+        <a href="{% url 'moniteur_indisponible' moniteur.id %}" class="block w-full text-center px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700">Marquer indisponible</a>
+        {% elif moniteur.statut == 'INDISPONIBLE' %}
+        <a href="{% url 'moniteur_activer' moniteur.id %}" class="block w-full text-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">Réactiver</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Leçons du jour</h3>
+    {% if lecons_jour %}
+    <div class="space-y-2">
+        {% for lecon in lecons_jour %}
+        <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+            <span class="text-sm">{{ lecon.date_debut|time:"H:i" }} — {{ lecon.dossier.inscription.apprenant }}</span>
+            {% include "components/status_badge.html" with statut=lecon.statut %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-sm text-gray-500">Aucune leçon aujourd'hui.</p>
+    {% endif %}
+</div>
+{% endblock %}

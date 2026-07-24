@@ -1,0 +1,14 @@
+<div class="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+    <div class="flex items-center justify-between mb-2">
+        <p class="text-sm font-medium text-gray-500">{{ label }}</p>
+        {% if icon %}
+            <div class="w-10 h-10 rounded-lg {{ icon_bg|default:'bg-blue-50' }} flex items-center justify-center {{ icon_color|default:'text-blue-600' }}">
+                {{ icon|safe }}
+            </div>
+        {% endif %}
+    </div>
+    <p class="text-3xl font-bold text-gray-900">{{ value }}</p>
+    {% if subtext %}
+        <p class="text-xs text-gray-400 mt-1">{{ subtext }}</p>
+    {% endif %}
+</div>

@@ -1,0 +1,60 @@
+{% extends "layouts/app.html" %}
+{% load status_tags %}
+{% block title %}Examen détaillé{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Détail de l'examen" back_url="examens_liste" %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h3 class="text-lg font-semibold text-gray-900">Informations</h3>
+        <dl class="grid grid-cols-2 gap-4 text-sm">
+            <div><dt class="text-gray-500">Apprenant</dt><dd class="font-medium">{{ examen.dossier.inscription.apprenant }}</dd></div>
+            <div><dt class="text-gray-500">Catégorie</dt><dd class="font-medium">{{ examen.dossier.categorie_permis.code }}</dd></div>
+            <div><dt class="text-gray-500">Type d'examen</dt><dd class="font-medium">{{ examen.get_type_examen_display }}</dd></div>
+            <div><dt class="text-gray-500">Date</dt><dd class="font-medium">{{ examen.date_examen|date:"d/m/Y H:i" }}</dd></div>
+            <div><dt class="text-gray-500">Centre</dt><dd class="font-medium">{{ examen.centre_examen|default:"—" }}</dd></div>
+            <div><dt class="text-gray-500">N° convocation</dt><dd class="font-medium">{{ examen.numero_convocation|default:"—" }}</dd></div>
+            <div><dt class="text-gray-500">Statut</dt><dd class="font-medium">{% include "components/status_badge.html" with statut=examen.statut %}</dd></div>
+            <div><dt class="text-gray-500">Dossier</dt><dd class="font-medium">#{{ examen.dossier.numero_dossier }}</dd></div>
+        </dl>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h3 class="text-lg font-semibold text-gray-900">Actions</h3>
+        <div class="flex flex-col gap-2">
+            {% if examen.statut == StatutExamen.PLANIFIE %}
+            <a href="{% url 'examen_confirmer' examen.id %}" class="w-full text-center px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Confirmer l'examen</a>
+            <a href="{% url 'examen_presenter' examen.id %}" class="w-full text-center px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700">Marquer présent</a>
+            <a href="{% url 'examen_absent' examen.id %}" class="w-full text-center px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700">Marquer absent</a>
+            <a href="{% url 'examen_annuler' examen.id %}" class="w-full text-center px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700">Annuler</a>
+            {% elif examen.statut == StatutExamen.CONFIRME %}
+            <a href="{% url 'examen_presenter' examen.id %}" class="w-full text-center px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700">Marquer présent</a>
+            <a href="{% url 'examen_absent' examen.id %}" class="w-full text-center px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700">Marquer absent</a>
+            <a href="{% url 'examen_annuler' examen.id %}" class="w-full text-center px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700">Annuler</a>
+            {% elif examen.statut == StatutExamen.PRESENTE %}
+            <a href="{% url 'examen_resultat' examen.id %}" class="w-full text-center px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Enregistrer résultat</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if examen.statut == StatutExamen.RESULTAT_DISPONIBLE %}
+<div class="bg-white rounded-xl border border-gray-200 p-6 mt-6 space-y-4">
+    <h3 class="text-lg font-semibold text-gray-900">Résultat</h3>
+    <dl class="grid grid-cols-3 gap-4 text-sm">
+        <div>
+            <dt class="text-gray-500">Résultat</dt>
+            <dd class="font-bold text-lg {% if examen.resultat == 'ADMIS' %}text-green-600{% elif examen.resultat == 'AJOURNE' %}text-orange-600{% elif examen.resultat == 'ECHOUE' %}text-red-600{% else %}text-gray-400{% endif %}">
+                {{ examen.get_resultat_display }}
+            </dd>
+        </div>
+        {% if examen.score is not None %}
+        <div><dt class="text-gray-500">Score</dt><dd class="font-medium">{{ examen.score }}/30</dd></div>
+        {% endif %}
+        <div><dt class="text-gray-500">Enregistré le</dt><dd class="font-medium">{{ examen.resultat_enregistre_le|date:"d/m/Y H:i" }}</dd></div>
+    </dl>
+    {% if examen.observation %}
+    <div><dt class="text-gray-500 text-sm">Observation</dt><dd class="text-sm text-gray-700 mt-1">{{ examen.observation }}</dd></div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

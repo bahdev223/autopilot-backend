@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-gradient-to-br from-blue-50 to-indigo-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AutoPilot — Connexion{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="h-full flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-600 text-white text-2xl font-bold mb-4">AP</div>
+            <h1 class="text-2xl font-bold text-gray-900">AutoPilot</h1>
+            <p class="text-gray-500 text-sm mt-1">Plateforme de gestion d'auto-école</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            {% if messages %}
+                {% for message in messages %}
+                    {% include "components/alert.html" with message=message %}
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+
+        <p class="text-center text-xs text-gray-400 mt-6">AutoPilot V0.1 &mdash; &copy; {% now "Y" %}</p>
+    </div>
+</body>
+</html>

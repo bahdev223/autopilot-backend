@@ -1,0 +1,73 @@
+{% extends "layouts/app.html" %}
+{% block title %}Nouvelle leçon{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Nouvelle leçon" back_url="lecons_liste" %}
+
+<form method="post" class="space-y-6 max-w-2xl">
+    {% csrf_token %}
+    <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Dossier candidat</label>
+            <select name="dossier_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option value="">Sélectionner un dossier...</option>
+                {% for d in dossiers %}
+                <option value="{{ d.id }}">{{ d.inscription.apprenant }} — {{ d.categorie_permis.code }} ({{ d.numero_dossier }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date et début</label>
+                <input type="datetime-local" name="date_debut" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date et fin</label>
+                <input type="datetime-local" name="date_fin" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+            </div>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Type de leçon</label>
+            <select name="type_lecon" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option value="CONDUITE">Conduite</option>
+                <option value="THEORIE">Théorie</option>
+                <option value="SIMULATEUR">Simulateur</option>
+                <option value="MANOEUVRE">Manoeuvre</option>
+                <option value="CIRCULATION">Circulation</option>
+                <option value="REVISION">Révision</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Moniteur</label>
+            <select name="moniteur_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option value="">Sélectionner un moniteur...</option>
+                {% for m in moniteurs %}
+                <option value="{{ m.id }}">{{ m.nom_complet }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Véhicule (optionnel)</label>
+            <select name="vehicule_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option value="">Pas de véhicule</option>
+                {% for v in vehicules %}
+                <option value="{{ v.id }}">{{ v.marque }} {{ v.modele|default:"" }} — {{ v.immatriculation }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Lieu de départ</label>
+                <input type="text" name="lieu_depart" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Auto-École">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Lieu d'arrivée</label>
+                <input type="text" name="lieu_arrivee" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Auto-École">
+            </div>
+        </div>
+    </div>
+    <div class="flex gap-3">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">Planifier</button>
+        <a href="{% url 'lecons_liste' %}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Annuler</a>
+    </div>
+</form>
+{% endblock %}

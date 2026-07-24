@@ -1,0 +1,56 @@
+{% extends "layouts/app.html" %}
+{% block title %}AutoPilot — Plan comptable{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500"><a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span><a href="{% url 'comptabilite_dashboard' %}" class="hover:text-blue-600">Comptabilité</a><span class="mx-2">/</span><span class="text-gray-900 font-medium">Plan comptable</span></nav>
+    <h1 class="text-2xl font-bold text-gray-900">Plan comptable SYSCOHADA</h1>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="px-6 py-3 border-b border-gray-200 bg-gray-50">
+        <form class="flex gap-3">
+            <input type="text" name="q" value="{{ q }}" placeholder="Rechercher code, libellé..." class="flex-1 pl-3 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <select name="classe" onchange="this.form.submit()" class="text-sm border border-gray-300 rounded-lg px-3 py-1.5">
+                <option value="">Toutes les classes</option>
+                {% for i in "12345678"|make_list %}<option value="{{ i }}" {% if classe == i %}selected{% endif %}>Classe {{ i }}</option>{% endfor %}
+            </select>
+            <select name="actif" onchange="this.form.submit()" class="text-sm border border-gray-300 rounded-lg px-3 py-1.5">
+                <option value="">Tous</option>
+                <option value="1" {% if actif == '1' %}selected{% endif %}>Actifs</option>
+                <option value="0" {% if actif == '0' %}selected{% endif %}>Inactifs</option>
+            </select>
+            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Rechercher</button>
+        </form>
+    </div>
+    {% if comptes %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50"><tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Libellé</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nature</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Mouvement</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actif</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for c in comptes %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-3 text-sm font-mono text-blue-600"><a href="{% url 'compte_fiche' c.pk %}">{{ c.code }}</a></td>
+                    <td class="px-6 py-3 text-sm text-gray-900">{{ c.libelle }}</td>
+                    <td class="px-6 py-3 text-sm text-gray-500">{{ c.get_nature_display }}</td>
+                    <td class="px-6 py-3 text-sm text-gray-500">{{ c.get_type_compte_display }}</td>
+                    <td class="px-6 py-3 text-center">{% if c.est_mouvement %}<span class="text-green-600">✓</span>{% else %}<span class="text-gray-300">—</span>{% endif %}</td>
+                    <td class="px-6 py-3 text-center">{% if c.actif %}<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Actif</span>{% else %}<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Inactif</span>{% endif %}</td>
+                    <td class="px-6 py-3 text-right"><a href="{% url 'compte_fiche' c.pk %}" class="text-blue-600 hover:underline text-sm">Détail</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        {% include "components/empty_state.html" with title="Aucun compte" message="Le plan comptable SYSCOHADA n'a pas encore été chargé." %}
+    {% endif %}
+</div>
+{% endblock %}

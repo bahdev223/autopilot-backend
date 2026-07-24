@@ -1,0 +1,48 @@
+{% extends "layouts/app.html" %}
+{% block title %}Planning{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Planning hebdomadaire" subtitle="Vue d'ensemble des leçons de la semaine" %}
+
+<div class="mb-4 flex gap-2">
+    <a href="{% url 'lecon_creer' %}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Nouvelle leçon
+    </a>
+</div>
+
+<div class="space-y-6">
+    {% for jour in semaine %}
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div class="px-6 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="font-semibold text-gray-900">
+                {% if forloop.first %}Aujourd'hui — {% elif forloop.counter == 2 %}Demain — {% endif %}
+                {{ jour.date|date:"l d/m/Y" }}
+            </h3>
+            <span class="text-sm text-gray-500">{{ jour.lecons|length }} leçon(s)</span>
+        </div>
+        {% if jour.lecons %}
+        <div class="divide-y divide-gray-100">
+            {% for lecon in jour.lecons %}
+            <div class="px-6 py-3 flex items-center justify-between hover:bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-mono text-gray-700 w-20">{{ lecon.date_debut|time:"H:i" }}–{{ lecon.date_fin|time:"H:i" }}</span>
+                    <span class="text-sm font-medium text-gray-900">{{ lecon.dossier.inscription.apprenant }}</span>
+                    <span class="text-sm text-gray-500">avec {{ lecon.moniteur.nom_complet }}</span>
+                    {% if lecon.vehicule %}
+                    <span class="text-xs text-gray-400 font-mono">{{ lecon.vehicule.immatriculation }}</span>
+                    {% endif %}
+                </div>
+                <div class="flex items-center gap-2">
+                    {% include "components/status_badge.html" with statut=lecon.statut %}
+                    <a href="{% url 'lecon_fiche' lecon.id %}" class="text-blue-600 hover:underline text-sm">Voir</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="px-6 py-8 text-center text-gray-500 text-sm">Aucune leçon ce jour.</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

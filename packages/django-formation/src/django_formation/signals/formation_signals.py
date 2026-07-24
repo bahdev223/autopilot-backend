@@ -1,0 +1,17 @@
+import django.dispatch
+
+apprenant_cree = django.dispatch.Signal()
+apprenant_archive = django.dispatch.Signal()
+formation_publiee = django.dispatch.Signal()
+formation_archivee = django.dispatch.Signal()
+session_inscriptions_ouvertes = django.dispatch.Signal()
+session_demarre = django.dispatch.Signal()
+session_terminee = django.dispatch.Signal()
+session_annulee = django.dispatch.Signal()
+inscription_creee = django.dispatch.Signal()
+inscription_demarre = django.dispatch.Signal()
+inscription_confirmee = django.dispatch.Signal()
+inscription_refusee = django.dispatch.Signal()
+inscription_annulee = django.dispatch.Signal()
+inscription_abandonnee = django.dispatch.Signal()
+inscription_terminee = django.dispatch.Signal()

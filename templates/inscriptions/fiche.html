@@ -1,0 +1,29 @@
+{% extends "layouts/app.html" %}
+{% load status_tags %}
+{% block title %}AutoPilot — Inscription {{ inscription.numero }}{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500">
+        <a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span>
+        <a href="/inscriptions/" class="hover:text-blue-600">Inscriptions</a><span class="mx-2">/</span>
+        <span class="text-gray-900 font-medium">{{ inscription.numero }}</span>
+    </nav>
+    <div class="flex items-center gap-3">
+        <h1 class="text-2xl font-bold text-gray-900">Inscription {{ inscription.numero }}</h1>
+        {% include "components/status_badge.html" with statut=inscription.statut %}
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 p-6 max-w-2xl">
+    <dl class="grid grid-cols-2 gap-4 text-sm">
+        <div><dt class="text-gray-500">Apprenant</dt><dd class="font-medium"><a href="{% url 'apprenant_fiche' inscription.apprenant.id %}" class="text-blue-600 hover:underline">{{ inscription.apprenant }}</a></dd></div>
+        <div><dt class="text-gray-500">Formation</dt><dd class="font-medium">{{ inscription.session.formation.nom }}</dd></div>
+        <div><dt class="text-gray-500">Session</dt><dd class="font-medium">{{ inscription.session.code }}</dd></div>
+        <div><dt class="text-gray-500">Date d'inscription</dt><dd class="font-medium">{{ inscription.created|date:"d/m/Y H:i" }}</dd></div>
+        <div><dt class="text-gray-500">Statut</dt><dd>{% include "components/status_badge.html" with statut=inscription.statut %}</dd></div>
+    </dl>
+    {% if inscription.observation %}
+        <hr class="my-4"><p class="text-sm text-gray-600">{{ inscription.observation }}</p>
+    {% endif %}
+</div>
+{% endblock %}

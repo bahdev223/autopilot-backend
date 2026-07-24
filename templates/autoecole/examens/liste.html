@@ -1,0 +1,88 @@
+{% extends "layouts/app.html" %}
+{% load status_tags %}
+{% block title %}Examens{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Examens" subtitle="Gestion des examens" create_url="examen_creer" create_label="Planifier un examen" %}
+
+<div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <p class="text-2xl font-bold text-gray-900">{{ stats.total }}</p>
+        <p class="text-sm text-gray-500">Total</p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <p class="text-2xl font-bold text-blue-600">{{ stats.planifies }}</p>
+        <p class="text-sm text-gray-500">À venir</p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <p class="text-2xl font-bold text-green-600">{{ stats.admis }}</p>
+        <p class="text-sm text-gray-500">Admis</p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <p class="text-2xl font-bold text-orange-600">{{ stats.attente }}</p>
+        <p class="text-sm text-gray-500">En attente</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="p-4 border-b border-gray-200">
+        <form method="get" class="flex flex-wrap gap-3">
+            <input type="text" name="q" value="{{ q }}" placeholder="Rechercher apprenant..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+            <select name="statut" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option value="">Statut</option>
+                <option value="PLANIFIE" {% if statut == 'PLANIFIE' %}selected{% endif %}>Planifié</option>
+                <option value="CONFIRME" {% if statut == 'CONFIRME' %}selected{% endif %}>Confirmé</option>
+                <option value="PRESENTE" {% if statut == 'PRESENTE' %}selected{% endif %}>Présenté</option>
+                <option value="ABSENT" {% if statut == 'ABSENT' %}selected{% endif %}>Absent</option>
+                <option value="ANNULE" {% if statut == 'ANNULE' %}selected{% endif %}>Annulé</option>
+                <option value="RESULTAT_DISPONIBLE" {% if statut == 'RESULTAT_DISPONIBLE' %}selected{% endif %}>Résultat disponible</option>
+            </select>
+            <select name="type" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option value="">Type</option>
+                <option value="CODE_INTERNE" {% if type_examen == 'CODE_INTERNE' %}selected{% endif %}>Code interne</option>
+                <option value="CODE_OFFICIEL" {% if type_examen == 'CODE_OFFICIEL' %}selected{% endif %}>Code officiel</option>
+                <option value="CONDUITE_INTERNE" {% if type_examen == 'CONDUITE_INTERNE' %}selected{% endif %}>Conduite interne</option>
+                <option value="CONDUITE_OFFICIELLE" {% if type_examen == 'CONDUITE_OFFICIELLE' %}selected{% endif %}>Conduite officielle</option>
+            </select>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">Filtrer</button>
+        </form>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Apprenant</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Résultat</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for ex in examens %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ ex.date_examen|date:"d/m/Y H:i" }}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ ex.dossier.inscription.apprenant }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ ex.dossier.categorie_permis.code }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ ex.get_type_examen_display }}</td>
+                    <td class="px-6 py-4">{% include "components/status_badge.html" with statut=ex.statut %}</td>
+                    <td class="px-6 py-4 text-sm font-medium">
+                        {% if ex.statut == StatutExamen.RESULTAT_DISPONIBLE %}
+                            <span class="{% if ex.resultat == 'ADMIS' %}text-green-600{% elif ex.resultat == 'AJOURNE' %}text-orange-600{% elif ex.resultat == 'ECHOUE' %}text-red-600{% else %}text-gray-400{% endif %}">
+                                {{ ex.get_resultat_display|default:"—" }}
+                            </span>
+                        {% else %}
+                            <span class="text-gray-400">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right text-sm"><a href="{% url 'examen_fiche' ex.id %}" class="text-blue-600 hover:underline">Voir</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="px-6 py-12 text-center text-gray-500">Aucun examen trouvé.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

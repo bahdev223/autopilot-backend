@@ -1,0 +1,52 @@
+{% extends "layouts/app.html" %}
+{% block title %}Journal d'activité{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Journal d'activité" subtitle="Audit des actions" %}
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="p-4 border-b border-gray-200">
+        <form method="get" class="flex flex-wrap gap-3">
+            <input type="text" name="q" value="{{ q }}" placeholder="Rechercher une action..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+            <select name="categorie" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option value="">Toutes catégories</option>
+                {% for c in categories %}
+                <option value="{{ c }}" {% if categorie == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+            <select name="action" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option value="">Toutes actions</option>
+                {% for a in actions %}
+                <option value="{{ a }}" {% if action == a %}selected{% endif %}>{{ a }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">Filtrer</button>
+        </form>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Utilisateur</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Entité</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for e in entries %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{{ e.created_at|date:"d/m/Y H:i:s" }}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ e.action }}</td>
+                    <td class="px-6 py-4"><span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">{{ e.categorie }}</span></td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ e.utilisateur.email|default:"—" }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ e.entite_type|default:"—" }}{% if e.entite_id %} #{{ e.entite_id|truncatechars:8 }}{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">Aucune entrée trouvée.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

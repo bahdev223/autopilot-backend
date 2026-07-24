@@ -1,0 +1,130 @@
+{% extends "layouts/app.html" %}
+{% block title %}AutoPilot — {{ expense.reference_number|default:"Dépense" }}{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500">
+        <a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span>
+        <a href="/depenses/" class="hover:text-blue-600">Dépenses</a><span class="mx-2">/</span>
+        <span class="text-gray-900 font-medium">{{ expense.reference_number|default:"Dépense" }}</span>
+    </nav>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div><h1 class="text-2xl font-bold text-gray-900">{{ expense.reference_number|default:"Dépense" }}</h1>
+            <p class="text-sm text-gray-500">Créée par {{ expense.user.username }} le {{ expense.created_at|date:"d/m/Y H:i" }}</p></div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                {% if expense.status == 'draft' %}bg-gray-100 text-gray-600
+                {% elif expense.status == 'submitted' %}bg-blue-100 text-blue-700
+                {% elif expense.status == 'pending_approval' %}bg-yellow-100 text-yellow-700
+                {% elif expense.status == 'approved' %}bg-green-100 text-green-700
+                {% elif expense.status == 'rejected' %}bg-red-100 text-red-700
+                {% elif expense.status == 'paid' %}bg-teal-100 text-teal-700
+                {% elif expense.status == 'archived' %}bg-gray-100 text-gray-400
+                {% elif expense.status == 'cancelled' %}bg-red-50 text-red-400
+                {% endif %}">{{ expense.get_status_display }}</span>
+        </div>
+        <div class="flex gap-2">
+            {% if expense.is_editable %}
+            <a href="{% url 'expense_modifier' expense.id %}" class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Modifier</a>
+            <a href="{% url 'expense_supprimer' expense.id %}" class="px-3 py-1.5 text-sm border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors">Supprimer</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase mb-4">Détails</h3>
+            <dl class="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
+                <div><dt class="text-gray-500">Montant HT</dt><dd class="font-medium text-gray-900">{{ expense.amount|floatformat:0 }} {{ expense.currency }}</dd></div>
+                <div><dt class="text-gray-500">Taxe</dt><dd class="font-medium text-gray-900">{{ expense.tax_amount|floatformat:0 }} {{ expense.currency }}</dd></div>
+                <div><dt class="text-gray-500">Total TTC</dt><dd class="font-medium text-lg text-blue-600">{{ expense.total_amount|floatformat:0 }} {{ expense.currency }}</dd></div>
+                <div><dt class="text-gray-500">Catégorie</dt><dd class="font-medium">{{ expense.category.get_full_path|default:"—" }}</dd></div>
+                <div><dt class="text-gray-500">Nature</dt><dd class="font-medium">{{ expense.get_expense_nature_display|default:"—" }}</dd></div>
+                <div><dt class="text-gray-500">Centre de coût</dt><dd class="font-medium">{{ expense.cost_center.name|default:"—" }}</dd></div>
+                <div><dt class="text-gray-500">Fournisseur</dt><dd class="font-medium">{{ expense.vendor|default:"—" }}</dd></div>
+                <div><dt class="text-gray-500">Date de la dépense</dt><dd class="font-medium">{{ expense.date_incurred|date:"d/m/Y" }}</dd></div>
+                {% if expense.approved_by %}
+                <div><dt class="text-gray-500">Approuvée par</dt><dd class="font-medium">{{ expense.approved_by.username }} le {{ expense.date_approved|date:"d/m/Y H:i" }}</dd></div>
+                {% endif %}
+                {% if expense.rejection_reason %}
+                <div class="col-span-2"><dt class="text-gray-500">Motif du rejet</dt><dd class="font-medium text-red-600">{{ expense.rejection_reason }}</dd></div>
+                {% endif %}
+                <div class="col-span-2"><dt class="text-gray-500">Description</dt><dd class="font-medium text-gray-900">{{ expense.description|linebreaks }}</dd></div>
+            </dl>
+        </div>
+
+        {% if expense.approvals.all %}
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase mb-4">Approbations</h3>
+            <div class="space-y-3">
+                {% for approval in expense.approvals.all %}
+                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                    <span class="px-2 py-1 text-xs rounded-full font-medium {% if approval.decision == 'approved' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">{{ approval.get_decision_display }}</span>
+                    <div><p class="text-sm font-medium text-gray-900">{{ approval.approved_by.username }}</p>{% if approval.comment %}<p class="text-sm text-gray-600">{{ approval.comment }}</p>{% endif %}<p class="text-xs text-gray-400">{{ approval.created_at|date:"d/m/Y H:i" }}</p></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if expense.payments.all %}
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase mb-4">Paiements</h3>
+            <div class="space-y-3">
+                {% for payment in expense.payments.all %}
+                <div class="p-3 bg-gray-50 rounded-lg">
+                    <div class="flex justify-between"><span class="font-medium text-gray-900">{{ payment.amount_paid|floatformat:0 }} {{ expense.currency }}</span><span class="text-sm text-gray-500">{{ payment.payment_date|date:"d/m/Y" }}</span></div>
+                    <p class="text-sm text-gray-600">{{ payment.get_payment_method_display }}{% if payment.reference %} — {{ payment.reference }}{% endif %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="space-y-4">
+        {% if expense.status == 'draft' %}
+        <form method="post" action="{% url 'expense_soumettre' expense.id %}">{% csrf_token %}
+            <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Soumettre la dépense</button>
+        </form>
+        {% endif %}
+        {% if expense.status == 'submitted' or expense.status == 'pending_approval' %}
+        <div class="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
+            <h4 class="text-sm font-semibold text-gray-700">Actions d'approbation</h4>
+            <form method="post" action="{% url 'expense_approuver' expense.id %}" class="space-y-2">{% csrf_token %}
+                <input type="text" name="comment" placeholder="Commentaire (optionnel)" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
+                <button type="submit" class="w-full px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">Approuver</button>
+            </form>
+            <form method="post" action="{% url 'expense_rejeter' expense.id %}" class="space-y-2">{% csrf_token %}
+                <input type="text" name="reason" placeholder="Motif du rejet" required class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
+                <button type="submit" class="w-full px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700">Rejeter</button>
+            </form>
+        </div>
+        {% endif %}
+        {% if expense.status == 'approved' %}
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+            <h4 class="text-sm font-semibold text-gray-700 mb-3">Enregistrer un paiement</h4>
+            <form method="post" action="{% url 'expense_payer' expense.id %}" class="space-y-2">{% csrf_token %}
+                <select name="payment_method" required class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
+                    <option value="">Mode de paiement</option>
+                    <option value="cash">Espèces</option>
+                    <option value="bank_transfer">Virement bancaire</option>
+                    <option value="mobile_money">Mobile Money</option>
+                    <option value="check">Chèque</option>
+                    <option value="card">Carte</option>
+                </select>
+                <input type="text" name="reference" placeholder="Référence" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
+                <input type="text" name="notes" placeholder="Notes" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
+                <button type="submit" class="w-full px-3 py-1.5 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700">Marquer comme payée</button>
+            </form>
+        </div>
+        {% endif %}
+        {% if expense.status != 'draft' and expense.status != 'cancelled' and expense.status != 'archived' %}
+        <form method="post" action="{% url 'expense_annuler' expense.id %}">{% csrf_token %}
+            <button type="submit" class="w-full px-4 py-2 border border-red-300 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors">Annuler la dépense</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "layouts/app.html" %}
+{% block title %}Configuration{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Configuration" subtitle="Paramètres de l'application" %}
+
+<div class="max-w-2xl bg-white rounded-xl border border-gray-200 p-6">
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <fieldset class="border border-gray-200 rounded-lg p-4">
+            <legend class="text-sm font-semibold text-gray-700 px-2">Localisation</legend>
+            <div class="grid grid-cols-2 gap-4 mt-2">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Devise</label>
+                    <select name="devise" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="XOF" {% if config.devise == 'XOF' %}selected{% endif %}>XOF (Franc CFA)</option>
+                        <option value="EUR" {% if config.devise == 'EUR' %}selected{% endif %}>EUR (Euro)</option>
+                        <option value="USD" {% if config.devise == 'USD' %}selected{% endif %}>USD (Dollar)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fuseau horaire</label>
+                    <select name="fuseau_horaire" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="Africa/Bamako" {% if config.fuseau_horaire == 'Africa/Bamako' %}selected{% endif %}>Africa/Bamako (UTC+0)</option>
+                        <option value="Africa/Abidjan" {% if config.fuseau_horaire == 'Africa/Abidjan' %}selected{% endif %}>Africa/Abidjan (UTC+0)</option>
+                        <option value="Africa/Dakar" {% if config.fuseau_horaire == 'Africa/Dakar' %}selected{% endif %}>Africa/Dakar (UTC+0)</option>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="border border-gray-200 rounded-lg p-4">
+            <legend class="text-sm font-semibold text-gray-700 px-2">Leçons</legend>
+            <div class="grid grid-cols-2 gap-4 mt-2">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Durée par défaut (min)</label>
+                    <input type="number" name="duree_lecon_defaut_minutes" value="{{ config.duree_lecon_defaut_minutes }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Délai annulation (heures)</label>
+                    <input type="number" name="delai_annulation_lecon_heures" value="{{ config.delai_annulation_lecon_heures }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="border border-gray-200 rounded-lg p-4">
+            <legend class="text-sm font-semibold text-gray-700 px-2">Numérotation</legend>
+            <div class="grid grid-cols-2 gap-4 mt-2">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Préfixe dossier</label>
+                    <input type="text" name="prefixe_numero_dossier" value="{{ config.prefixe_numero_dossier }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Préfixe moniteur</label>
+                    <input type="text" name="prefixe_matricule_moniteur" value="{{ config.prefixe_matricule_moniteur }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="border border-gray-200 rounded-lg p-4">
+            <legend class="text-sm font-semibold text-gray-700 px-2">Évaluations</legend>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Score maximum</label>
+                <input type="number" name="score_maximum_evaluation" value="{{ config.score_maximum_evaluation }}" step="0.5" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+            </div>
+        </fieldset>
+
+        <fieldset class="border border-gray-200 rounded-lg p-4">
+            <legend class="text-sm font-semibold text-gray-700 px-2">Options</legend>
+            <div class="space-y-2 mt-2">
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" name="verifier_expiration_documents" {% if config.verifier_expiration_documents %}checked{% endif %} class="rounded border-gray-300">
+                    <span class="text-sm text-gray-700">Vérifier l'expiration des documents</span>
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" name="permettre_examen_sans_heures_minimum" {% if config.permettre_examen_sans_heures_minimum %}checked{% endif %} class="rounded border-gray-300">
+                    <span class="text-sm text-gray-700">Permettre l'examen sans heures minimum</span>
+                </label>
+            </div>
+        </fieldset>
+
+        <div class="flex justify-end pt-4">
+            <button type="submit" class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Enregistrer</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

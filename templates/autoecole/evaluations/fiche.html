@@ -1,0 +1,51 @@
+{% extends "layouts/app.html" %}
+{% block title %}Évaluation détaillée{% endblock %}
+{% block content %}
+{% include "components/page_header.html" with title="Détail de l'évaluation" back_url="evaluations_liste" %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h3 class="text-lg font-semibold text-gray-900">Informations</h3>
+        <dl class="grid grid-cols-2 gap-4 text-sm">
+            <div><dt class="text-gray-500">Apprenant</dt><dd class="font-medium">{{ evaluation.lecon.dossier.inscription.apprenant }}</dd></div>
+            <div><dt class="text-gray-500">Moniteur</dt><dd class="font-medium">{{ evaluation.moniteur.nom_complet }}</dd></div>
+            <div><dt class="text-gray-500">Leçon du</dt><dd class="font-medium">{{ evaluation.lecon.date_debut|date:"d/m/Y H:i" }}</dd></div>
+            <div><dt class="text-gray-500">Catégorie</dt><dd class="font-medium">{{ evaluation.lecon.dossier.categorie_permis.code }}</dd></div>
+            <div><dt class="text-gray-500">Note globale</dt><dd class="font-bold text-lg {% if evaluation.note_globale >= 7 %}text-green-600{% elif evaluation.note_globale >= 5 %}text-orange-600{% else %}text-red-600{% endif %}">{{ evaluation.note_globale|floatformat:1 }}/10</dd></div>
+            <div><dt class="text-gray-500">Niveau</dt><dd class="font-medium">{{ evaluation.get_niveau_display|default:"Non spécifié" }}</dd></div>
+            <div><dt class="text-gray-500">Date d'évaluation</dt><dd class="font-medium">{{ evaluation.created_at|date:"d/m/Y H:i" }}</dd></div>
+            <div><dt class="text-gray-500">Recommandé examen</dt><dd class="font-medium">{% if evaluation.recommande_examen %}<span class="text-green-600">Oui</span>{% else %}<span class="text-gray-500">Non</span>{% endif %}</dd></div>
+        </dl>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h3 class="text-lg font-semibold text-gray-900">Compétences acquises</h3>
+        {% if evaluation.competences_acquises %}
+        <div class="flex flex-wrap gap-2">
+            {% for comp in evaluation.competences_acquises %}
+            <span class="inline-block bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">{{ comp }}</span>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-gray-500">Aucune compétence cochée.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Points forts</h3>
+        <p class="text-sm text-gray-700">{{ evaluation.points_forts|default:"Aucun point fort mentionné." }}</p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Points à améliorer</h3>
+        <p class="text-sm text-gray-700">{{ evaluation.points_a_ameliorer|default:"Aucun point à améliorer mentionné." }}</p>
+    </div>
+</div>
+
+{% if evaluation.commentaire %}
+<div class="bg-white rounded-xl border border-gray-200 p-6 mt-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Commentaire</h3>
+    <p class="text-sm text-gray-700">{{ evaluation.commentaire }}</p>
+</div>
+{% endif %}
+{% endblock %}

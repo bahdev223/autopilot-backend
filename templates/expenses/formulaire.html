@@ -1,0 +1,83 @@
+{% extends "layouts/app.html" %}
+{% block title %}AutoPilot — {% if mode == 'creer' %}Nouvelle dépense{% else %}Modifier la dépense{% endif %}{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500">
+        <a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span>
+        <a href="/depenses/" class="hover:text-blue-600">Dépenses</a><span class="mx-2">/</span>
+        <span class="text-gray-900 font-medium">{% if mode == 'creer' %}Nouvelle dépense{% else %}Modifier{% endif %}</span>
+    </nav>
+    <h1 class="text-2xl font-bold text-gray-900">{% if mode == 'creer' %}Nouvelle dépense{% else %}Modifier la dépense{% endif %}</h1>
+</div>
+
+<form method="post" class="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
+    {% csrf_token %}
+
+    <div>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Informations générales</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie *</label>
+                <select name="category" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="">—</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if expense.category_id == cat.id %}selected{% endif %}>{{ cat.get_full_path }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nature</label>
+                <select name="expense_nature" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="">—</option>
+                    {% for code, label in natures %}
+                    <option value="{{ code }}" {% if expense.expense_nature == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Centre de coût</label>
+                <select name="cost_center" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="">—</option>
+                    {% for cc in cost_centers %}
+                    <option value="{{ cc.id }}" {% if expense.cost_center_id == cc.id %}selected{% endif %}>{{ cc.code }} — {{ cc.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Devise</label>
+                <select name="currency" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="XOF" {% if expense.currency == 'XOF' %}selected{% endif %}>XOF (F CFA)</option>
+                    <option value="EUR" {% if expense.currency == 'EUR' %}selected{% endif %}>EUR (Euro)</option>
+                    <option value="USD" {% if expense.currency == 'USD' %}selected{% endif %}>USD (Dollar)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Montants</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Montant HT *</label><input type="number" step="0.01" name="amount" value="{{ expense.amount|default:'' }}" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Taxe</label><input type="number" step="0.01" name="tax_amount" value="{{ expense.tax_amount|default:'0' }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"></div>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Description</h2>
+        <div class="space-y-4">
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Description *</label><textarea name="description" rows="3" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">{{ expense.description|default:'' }}</textarea></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Fournisseur</label><input type="text" name="vendor" value="{{ expense.vendor|default:'' }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Date de la dépense *</label><input type="date" name="date_incurred" value="{{ expense.date_incurred|date:'Y-m-d'|default:'' }}" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+            {% if mode == 'creer' %}Créer la dépense{% else %}Enregistrer les modifications{% endif %}
+        </button>
+        <a href="/depenses/" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Annuler</a>
+    </div>
+</form>
+{% endblock %}

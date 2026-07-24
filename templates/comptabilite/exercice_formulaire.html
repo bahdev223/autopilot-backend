@@ -1,0 +1,27 @@
+{% extends "layouts/app.html" %}
+{% block title %}AutoPilot — {% if mode == 'creer' %}Nouvel exercice{% else %}Modifier l'exercice{% endif %}{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <nav class="flex mb-2 text-sm text-gray-500">
+        <a href="/" class="hover:text-blue-600">Accueil</a><span class="mx-2">/</span>
+        <a href="{% url 'comptabilite_dashboard' %}" class="hover:text-blue-600">Comptabilité</a><span class="mx-2">/</span>
+        <a href="{% url 'exercices_liste' %}" class="hover:text-blue-600">Exercices</a><span class="mx-2">/</span>
+        <span class="text-gray-900 font-medium">{% if mode == 'creer' %}Nouveau{% else %}Modifier{% endif %}</span>
+    </nav>
+    <h1 class="text-2xl font-bold text-gray-900">{% if mode == 'creer' %}Nouvel exercice comptable{% else %}Modifier l'exercice{% endif %}</h1>
+</div>
+
+<form method="post" class="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
+    {% csrf_token %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div><label class="block text-sm font-medium text-gray-700 mb-1">Code *</label><input type="text" name="code" value="{{ exercice.code|default:'' }}" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 2026"></div>
+        <div></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1">Date de début *</label><input type="date" name="date_debut" value="{{ exercice.date_debut|date:'Y-m-d'|default:'' }}" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1">Date de fin *</label><input type="date" name="date_fin" value="{{ exercice.date_fin|date:'Y-m-d'|default:'' }}" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"></div>
+    </div>
+    <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">{% if mode == 'creer' %}Créer l'exercice{% else %}Enregistrer{% endif %}</button>
+        <a href="{% url 'exercices_liste' %}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Annuler</a>
+    </div>
+</form>
+{% endblock %}
